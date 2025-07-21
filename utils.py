@@ -16,9 +16,16 @@ def create_model(use_dropout, dropout_rate):
     return model
 
 def train_and_evaluate(model, x_train, y_train, x_test, y_test, epochs, batch_size):
-    history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, y_test), verbose=0)
+    history = model.fit(
+        x_train, y_train,
+        validation_data=(x_test, y_test),
+        epochs=epochs,
+        batch_size=batch_size,
+        verbose=0
+    )
     test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
     return history, test_acc
+
 
 def plot_training(history):
     fig, ax = plt.subplots(1, 2, figsize=(12, 4))
