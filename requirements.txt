@@ -1,5 +1,5 @@
 streamlit==1.27.2
-tensorflow==2.15.1
+tensorflow‑cpu==2.19.0
 numpy
 pandas
 matplotlib

@@ -1,39 +1,36 @@
-# utils.py
-import tensorflow as tf
 import matplotlib.pyplot as plt
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.optimizers import Adam
 
-def compile_and_train(model, x_train, y_train, x_test, y_test, epochs=5):
-    model.compile(optimizer='adam',
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
-    
-    history = model.fit(
-        x_train, y_train,
-        validation_data=(x_test, y_test),
-        epochs=epochs,
-        verbose=1
-    )
-    return history
+def create_model(use_dropout, dropout_rate):
+    model = Sequential()
+    model.add(Dense(512, activation="relu", input_shape=(784,)))
+    if use_dropout:
+        model.add(Dropout(dropout_rate))
+    model.add(Dense(256, activation="relu"))
+    if use_dropout:
+        model.add(Dropout(dropout_rate))
+    model.add(Dense(10, activation="softmax"))
+    model.compile(loss="categorical_crossentropy", optimizer=Adam(), metrics=["accuracy"])
+    return model
+
+def train_and_evaluate(model, x_train, y_train, x_test, y_test, epochs, batch_size):
+    history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, y_test), verbose=0)
+    test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
+    return history, test_acc
 
 def plot_training(history):
-    acc = history.history['accuracy']
-    val_acc = history.history['val_accuracy']
-    loss = history.history['loss']
-    val_loss = history.history['val_loss']
+    fig, ax = plt.subplots(1, 2, figsize=(12, 4))
     
-    plt.figure(figsize=(12, 5))
+    ax[0].plot(history.history["loss"], label="Train Loss")
+    ax[0].plot(history.history["val_loss"], label="Val Loss")
+    ax[0].set_title("Loss")
+    ax[0].legend()
 
-    plt.subplot(1, 2, 1)
-    plt.plot(acc, label='Training Accuracy')
-    plt.plot(val_acc, label='Validation Accuracy')
-    plt.title('Accuracy Over Epochs')
-    plt.legend()
+    ax[1].plot(history.history["accuracy"], label="Train Acc")
+    ax[1].plot(history.history["val_accuracy"], label="Val Acc")
+    ax[1].set_title("Accuracy")
+    ax[1].legend()
 
-    plt.subplot(1, 2, 2)
-    plt.plot(loss, label='Training Loss')
-    plt.plot(val_loss, label='Validation Loss')
-    plt.title('Loss Over Epochs')
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig("training_plot.png")
+    return fig
