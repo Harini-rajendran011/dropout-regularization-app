@@ -6,7 +6,8 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
 from model import create_model
-from utils import compile_and_train, plot_training
+from utils import plot_training
+
 
 st.set_page_config(page_title="Dropout Regularization", layout="wide")
 st.title("🧠 Dropout Regularization on MNIST")
